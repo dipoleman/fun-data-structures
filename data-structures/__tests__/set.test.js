@@ -1,0 +1,67 @@
+const createSet = require('../set')
+
+describe('Set constructor',()=>{
+    test('check createSet returns an object',()=>{
+        expect(typeof createSet()).toBe('object')
+    })
+    test('Check a new instance of createSet with no items has property.cardinality = 0 ',()=>{
+        const testSet = createSet()
+        expect(testSet.cardinality).toBe(0)
+    })
+    test('Check a new instance of createSet with no items has property.maxSize which is equal to default value if no argument is passed in',()=>{
+        const testSet = createSet()
+        expect(testSet.maxSize).toBe(10)
+        const testSet2 = createSet(3)
+        expect(testSet2.maxSize).toBe(3)
+    })
+    describe('Set Methods',()=>{
+        test('add method adds a new element to the set, should also increase the cardinality',(()=>{
+            const testSet = createSet()
+            testSet.add("blue")
+            expect(testSet.members).toEqual({'blue':'blue'})
+            expect(testSet.cardinality).toBe(1)
+        }))
+        test('check that the add method only adds unique elements',()=>{
+            const testSet = createSet()
+            testSet.add("blue")
+            testSet.add("blue")
+            expect(testSet.members).toEqual({'blue':'blue'})
+            expect(testSet.cardinality).toBe(1)
+        })
+        test('check the pop method removes an item if its in the set',()=>{
+            const testSet = createSet()
+            testSet.add("blue")
+            testSet.add("red")
+            testSet.pop('blue')
+            expect(testSet.members).toEqual({'red':'red'})
+            expect(testSet.cardinality).toBe(1)
+        })
+        test('union method should take a set object as input and add only the elements that are not  member of the set',()=>{
+            const testSetA = createSet()
+            const testSetB = createSet()
+            testSetA.add('a')
+            testSetA.add('b')
+            testSetA.add('c')
+            testSetA.add('d')
+            testSetB.add('c')
+            testSetB.add('d')
+            testSetB.add('e')
+            testSetA.union(testSetB)
+            expect(testSetA.members).toEqual({'a':'a','b':'b','c':'c','d':'d','e':'e'})
+        })
+        test('when passing a set into the union method it does not mutate the passed in set',()=>{
+            const testSetA = createSet()
+            const testSetB = createSet()
+            testSetA.add('a')
+            testSetA.add('b')
+            testSetA.add('c')
+            testSetA.add('d')
+            testSetB.add('c')
+            testSetB.add('d')
+            testSetB.add('e')
+            const testSetB_Copy= {'c':'c','d':'d','e':'e'}
+            testSetA.union(testSetB)
+            expect(testSetB.members).toEqual(testSetB_Copy)
+        })
+    })
+})
